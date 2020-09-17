@@ -10,9 +10,7 @@ R1AwacsSpawn = SPAWN:New( "RU Awacs 1" )
 	:InitRepeatOnLanding()
 	:OnSpawnGroup(
 	function A1Group:OnEventCrash( EventData )  --start of eventhandling
-        if A1Group:GetSize() == 1 then
-            A1Group:Respawn()
-        end                      
+        A1Group:Respawn()                             
     end  -- end of eventhandling
 	)
 R1AwacsSpawn:Spawn()
@@ -22,9 +20,7 @@ R2AwacsSpawn = SPAWN:New( "RU Awacs 2" )
 	:InitRepeatOnLanding()
 	:OnSpawnGroup(
 	function A2Group:OnEventCrash( EventData )  --start of eventhandling
-        if A2Group:GetSize() == 1 then
-			A2:Respawn()
-        end                      
+        A2Group:Respawn()                             
     end  -- end of eventhandling
 	)
 R2AwacsSpawn:Spawn()
@@ -34,9 +30,7 @@ U1AwacsSpawn = SPAWN:New( "US Awacs 1" )
 	:InitRepeatOnLanding()
 	:OnSpawnGroup(
 	function U1Group:OnEventCrash( EventData )  --start of eventhandling
-        if U1Group:GetSize() == 1 then
-            U1Group:Respawn()
-        end                      
+        U1Group:Respawn()                             
     end  -- end of eventhandling
 	)
 U1AwacsSpawn:Spawn()
@@ -45,20 +39,28 @@ U2AwacsSpawn = SPAWN:New( "US Awacs 2" )
 	:InitLimit(1,2)
 	:InitRepeatOnLanding()
 	:OnSpawnGroup(
-	function U2Group:OnEventCrash( EventData )  --start of eventhandling
-        if U2Group:GetSize() == 1 then
-			U2:Respawn()
-        end                      
+	function U1Group:OnEventCrash( EventData )  --start of eventhandling
+        U1Group:Respawn()                             
     end  -- end of eventhandling
 	)
 U2AwacsSpawn:Spawn()
 
 --Add the EWR and Aircraft to the A2A_Dispatcher defense network
 
-local DetectionSetGroup = SET_GROUP:New()
-DetectionSetGroup:FilterPrefixes( { "RU Awacs", "RU EWR", "US Awacs", "US EWR" } )
-DetectionSetGroup:FilterStart()
+local EWR_Red = SET_GROUP:New()
+EWR_Red:FilterPrefixes( { "RU Awacs", "RU EWR"} )
+EWR_Red:FilterStart()
+local Detection = DETECTION_AREAS:New( EWR_Red, 30000 )
+A2ADispatcher_Red = AI_A2A_DISPATCHER:New( EWR_Red )
 
+local EWR_Blue = SET_GROUP:New()
+EWR_Blue:FilterPrefixes( { "US Awacs", "US EWR"} ) 
+EWR_Blue:FilterStart()
+local Detection = DETECTION_AREAS:New( EWR_Blue, 30000 )
+A2ADispatcher_Blue = AI_A2A_DISPATCHER:New( EWR_Blue )
+
+A2ADispatcher_Red:SetCommandCenter( RU_CC )
+A2ADispatcher_Blue:SetCommandCenter( US_CC )
 
 
 CapSpawn = SPAWN:New( "Rus1" )
