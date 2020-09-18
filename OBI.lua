@@ -4,6 +4,7 @@ do -- Setup the Command Centers
   US_CC = COMMANDCENTER:New( GROUP:FindByName( "BLUEHQ" ), "USA HQ" )
 
 end
+
 --spawn the Awacs and Tanker aircraft for both coalitions
 R1AwacsSpawn = SPAWN:New( "RU Awacs 1" )
     :InitRepeatOnLanding()
@@ -28,7 +29,6 @@ R1TankerSpawn = SPAWN:New( "RU Tanker 1" )
 R1TankerSpawn:Spawn()
 
 R2AwacsSpawn = SPAWN:New( "RU Awacs 2" )
-	--:InitLimit(1,2)
 	:InitRepeatOnLanding()
 	:OnSpawnGroup(
         function (SpawnGroup)
@@ -73,7 +73,6 @@ U1TankerSpawn = SPAWN:New( "US Tanker 1" )
 U1TankerSpawn:Spawn()
 
 U2AwacsSpawn = SPAWN:New( "US Awacs 2" )
-	--:InitLimit(1,2)
 	:InitRepeatOnLanding()
 	:OnSpawnGroup(
         function (SpawnGroup)
@@ -134,15 +133,15 @@ RedEWR2 = SPAWN
 :SpawnScheduled( 4000, .5 )
 
 RedEWR3 = SPAWN
-:New( "RE EWR 3" )
+:New( "RU EWR 3" )
 :InitLimit( 1, 8 )
 :InitRandomizePosition( true, 100, 50 )
 :SpawnScheduled( 4000, .5 )
 
 RedEWR4 = SPAWN
-:New( "RE EWR 4" )
+:New( "RU EWR 4" )
 :InitLimit( 1, 8 )
-:InitRandomizePosition( true	, 100, 50 )
+:InitRandomizePosition( true, 100, 50 )
 :SpawnScheduled( 4000, .5 )
 
 --Add the EWR and Aircraft to the A2A_Dispatcher defense network
@@ -174,7 +173,7 @@ A2ADispatcher_Red:SetSquadronLandingAtEngineShutdown( "NovoK" )
 A2ADispatcher_Red:SetSquadronOverhead( "NovoK", 1.3 )
 A2ADispatcher_Red:SetSquadronGrouping( "NovoK", 2 )
 
-A2ADispatcher_Red:SetSquadron( "Mozdok", AIRBASE.Caucasus.Novorossiysk, { "SQS27", "SQM23", "SQM29" }, 100 )
+A2ADispatcher_Red:SetSquadron( "Mozdok", AIRBASE.Caucasus.Mozdok, { "SQS27", "SQM23", "SQM29" }, 100 )
 A2ADispatcher_Red:SetSquadronTakeoffFromParkingHot( "Mozdok" )
 A2ADispatcher_Red:SetSquadronLandingAtEngineShutdown( "Mozdok" )
 A2ADispatcher_Red:SetSquadronOverhead( "Mozdok", 1.3 )
@@ -183,7 +182,7 @@ A2ADispatcher_Red:SetSquadronGrouping( "Mozdok", 4 )
 CAPZoneCoast = ZONE_POLYGON:New( "CAP Zone Coast", GROUP:FindByName( "CAP Zone Coast" ) )
 CAPZoneKuz = ZONE_POLYGON:New( "CAP Zone Kuz", GROUP:FindByName( "CAP Zone Kuz" ) )
 CAPZoneMount = ZONE_POLYGON:New( "CAP Zone Mount", GROUP:FindByName( "CAP Zone Mount" ) )
-CAPZoneEast1 = ZONE_POLYGON:New( "CAP Zone East1", GROUP:FindByName( "CAP Zone East1" ) )
+CAPZoneEasts = ZONE_POLYGON:New( "CAP Zone Easts", GROUP:FindByName( "CAP Zone Easts" ) )
 
 A2ADispatcher_Red:SetSquadronCap( "Maykop", CAPZoneMount, 4000, 10000, 500, 600, 600, 900 )
 A2ADispatcher_Red:SetSquadronCapInterval( "Maykop", 2, 180, 600 )
@@ -191,7 +190,7 @@ A2ADispatcher_Red:SetSquadronCap( "Novo", CAPZoneCoast, 4000, 10000, 500, 600, 6
 A2ADispatcher_Red:SetSquadronCapInterval( "Novo", 2, 180, 600 )
 A2ADispatcher_Red:SetSquadronCap( "NovoK", CAPZoneKuz, 4000, 10000, 500, 600, 600, 900 )
 A2ADispatcher_Red:SetSquadronCapInterval( "NovoK", 2, 180, 600 )
-A2ADispatcher_Red:SetSquadronCap( "Mozdok", CAPZoneKuz, 4000, 10000, 500, 600, 600, 900 )
+A2ADispatcher_Red:SetSquadronCap( "Mozdok", CAPZoneEasts, 4000, 10000, 500, 600, 600, 900 )
 A2ADispatcher_Red:SetSquadronCapInterval( "Mozdok", 4, 180, 600 )
 
 --Red A2ADispatcher end, begins blue
@@ -222,7 +221,7 @@ A2ADispatcher_Blue:SetSquadronLandingAtEngineShutdown( "KobuletiN" )
 A2ADispatcher_Blue:SetSquadronOverhead( "KobuletiN", 1.3 )
 A2ADispatcher_Blue:SetSquadronGrouping( "KobuletiN", 2 )
 
-A2ADispatcher_Blue:SetSquadron( "Vaziani", AIRBASE.Caucasus.Kobuleti, { "SQF18", "SQF16", "SQF15" }, 100 )
+A2ADispatcher_Blue:SetSquadron( "Vaziani", AIRBASE.Caucasus.Vaziani, { "SQF18", "SQF16", "SQF15" }, 100 )
 A2ADispatcher_Blue:SetSquadronTakeoffFromParkingHot( "Vaziani" )
 A2ADispatcher_Blue:SetSquadronLandingAtEngineShutdown( "Vaziani" )
 A2ADispatcher_Blue:SetSquadronOverhead( "Vaziani", 1.3 )
@@ -234,17 +233,43 @@ CAPZoneMounts = ZONE_POLYGON:New( "CAP Zone Mounts", GROUP:FindByName( "CAP Zone
 CAPZoneEast = ZONE_POLYGON:New( "CAP Zone East", GROUP:FindByName( "CAP Zone East" ) )
 
 A2ADispatcher_Blue:SetSquadronCap( "Senaki", CAPZoneMounts, 4000, 10000, 500, 600, 600, 900 )
-A2ADispatcher_Blue:SetSquadronCapInterval( "Senaki", 2, 180, 600 )
+A2ADispatcher_Blue:SetSquadronCapInterval( "Senaki", 2, 200, 800 )
 A2ADispatcher_Blue:SetSquadronCap( "Kobuleti", CAPZoneCoasts, 4000, 10000, 500, 600, 600, 900 )
-A2ADispatcher_Blue:SetSquadronCapInterval( "Kobuleti", 2, 180, 600 )
+A2ADispatcher_Blue:SetSquadronCapInterval( "Kobuleti", 2, 200, 800 )
 A2ADispatcher_Blue:SetSquadronCap( "KobuletiN", CAPZoneStennis, 4000, 10000, 500, 600, 600, 900 )
-A2ADispatcher_Blue:SetSquadronCapInterval( "KobuletiN", 2, 180, 600 )
+A2ADispatcher_Blue:SetSquadronCapInterval( "KobuletiN", 2, 200, 800 )
 A2ADispatcher_Blue:SetSquadronCap( "Vaziani", CAPZoneEast, 4000, 10000, 500, 600, 600, 900 )
-A2ADispatcher_Blue:SetSquadronCapInterval( "Vaziani", 4, 180, 600 )
+A2ADispatcher_Blue:SetSquadronCapInterval( "Vaziani", 4, 200, 800 )
 
+--ZoneTable = { ZONE:New( "Zone1" ), ZONE:New( "Zone2" ) }
 
+TemplateTableB = { "A", "B", "C" }
 
+Spawn_Vehicle_1 = SPAWN:New( "US Spawn 1" )
+:InitRandomizeRoute( 1, 1, 200 )
+:InitRandomizeTemplate( TemplateTableB ) 
+--:InitRandomizeZones( ZoneTable )
+:SpawnScheduled( 4000, .5 )
 
+Spawn_Vehicle_2 = SPAWN:New( "US Spawn 2" )
+:InitRandomizeRoute( 1, 1, 200 )
+:InitRandomizeTemplate( TemplateTableB ) 
+--:InitRandomizeZones( ZoneTable )
+:SpawnScheduled( 4000, .5 )
+
+TemplateTableR = { "AA", "BB", "CC" }
+
+Spawn_Vehicle_3 = SPAWN:New( "RU Spawn 1" )
+:InitRandomizeRoute( 1, 1, 200 )
+:InitRandomizeTemplate( TemplateTableR ) 
+--:InitRandomizeZones( ZoneTable )
+:SpawnScheduled( 4000, .5 )
+
+Spawn_Vehicle_4 = SPAWN:New( "RU Spawn 1" )
+:InitRandomizeRoute( 1, 1, 200 )
+:InitRandomizeTemplate( TemplateTableR ) 
+--:InitRandomizeZones( ZoneTable )
+:SpawnScheduled( 4000, .5 )
 
 --CapSpawn = SPAWN:New( "Rus1" )
 --    --:InitLimit(6,12)
