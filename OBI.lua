@@ -1,6 +1,3 @@
-msg = MESSAGE:New("Test",10)
-msg:ToAll()
-
 do -- Setup the Command Centers
   
   RU_CC = COMMANDCENTER:New( GROUP:FindByName( "REDHQ" ), "Russia HQ" )
@@ -102,57 +99,57 @@ U2TankerSpawn:Spawn()
 
 BlueEWR1 = SPAWN
 :New( "US EWR 1" )
-:InitLimit( 1, 20 )
+:InitLimit( 1, 8 )
 :InitRandomizePosition( true, 100, 50 )
-:SpawnScheduled( 600, .5 )
+:SpawnScheduled( 4000, .5 )
 
 BlueEWR2 = SPAWN
 :New( "US EWR 2" )
-:InitLimit( 1, 20 )
+:InitLimit( 1, 8 )
 :InitRandomizePosition( true, 100, 50 )
-:SpawnScheduled( 600, .5 )
+:SpawnScheduled( 4000, .5 )
 
 BlueEWR3 = SPAWN
 :New( "US EWR 3" )
-:InitLimit( 1, 20 )
+:InitLimit( 1, 8 )
 :InitRandomizePosition( true, 100, 50 )
-:SpawnScheduled( 600, .5 )
+:SpawnScheduled( 4000, .5 )
 
 BlueEWR4 = SPAWN
 :New( "US EWR 4" )
-:InitLimit( 1, 20 )
+:InitLimit( 1, 8 )
 :InitRandomizePosition( true, 100, 50 )
-:SpawnScheduled( 600, .5 )
+:SpawnScheduled( 4000, .5 )
 
 RedEWR1 = SPAWN
 :New( "RU EWR 1" )
-:InitLimit( 1, 20 )
+:InitLimit( 1, 8 )
 :InitRandomizePosition( true, 100, 50 )
-:SpawnScheduled( 600, .5 )
+:SpawnScheduled( 4000, .5 )
 
 RedEWR2 = SPAWN
 :New( "RU EWR 2" )
-:InitLimit( 1, 20 )
+:InitLimit( 1, 8 )
 :InitRandomizePosition( true, 100, 50 )
-:SpawnScheduled( 600, .5 )
+:SpawnScheduled( 4000, .5 )
 
 RedEWR3 = SPAWN
 :New( "RE EWR 3" )
-:InitLimit( 1, 20 )
+:InitLimit( 1, 8 )
 :InitRandomizePosition( true, 100, 50 )
-:SpawnScheduled( 600, .5 )
+:SpawnScheduled( 4000, .5 )
 
 RedEWR4 = SPAWN
 :New( "RE EWR 4" )
-:InitLimit( 1, 20 )
+:InitLimit( 1, 8 )
 :InitRandomizePosition( true	, 100, 50 )
-:SpawnScheduled( 600, .5 )
+:SpawnScheduled( 4000, .5 )
 
 --Add the EWR and Aircraft to the A2A_Dispatcher defense network
 --Red A2ADispatcher
 
 local EWR_Red = SET_GROUP:New()
-EWR_Red:FilterPrefixes( { "RU Awacs", "RU EWR"} )
+EWR_Red:FilterPrefixes( { "RU Awacs", "RU EWR", "1L13 EWR"} )
 EWR_Red:FilterStart()
 local Detection_Red = DETECTION_AREAS:New( EWR_Red, 30000 )--30km Detection area
 A2ADispatcher_Red = AI_A2A_DISPATCHER:New( Detection_Red )
@@ -200,7 +197,7 @@ A2ADispatcher_Red:SetSquadronCapInterval( "Mozdok", 4, 180, 600 )
 --Red A2ADispatcher end, begins blue
 
 local EWR_Blue = SET_GROUP:New()
-EWR_Blue:FilterPrefixes( { "US Awacs", "US EWR"} ) 
+EWR_Blue:FilterPrefixes( { "US Awacs", "US EWR", "Hawk sr"} ) 
 EWR_Blue:FilterStart()
 local Detection_Blue = DETECTION_AREAS:New( EWR_Blue, 30000 )
 A2ADispatcher_Blue = AI_A2A_DISPATCHER:New( Detection_Blue )
