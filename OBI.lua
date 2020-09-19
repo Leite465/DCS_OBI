@@ -5,7 +5,275 @@ do -- Setup the Command Centers
 
 end
 
+do -- Missions
+  
+  US_Mission_OBI = MISSION:New( US_CC, "Operation Burning Ice", "Primary",
+    "Welcome pilot. We need to consolidate out position on the theater.\n" ..
+    "There are 3 enemy strategic areas(capture points) located at region as shown on the briefing.\n" ..
+    "Eliminate all resistance on the areas, so our helicopters can unload troops and hardware, " ..
+    "if we have troops on the ground the area will be in our control.\n " .. 
+    "The orders are to hold position until all capture zones are taken.\n" ..
+    "Use the map (F10) or the briefing for a clear indication of the location of each zone.\n" ..
+    "Note that heavy resistance can be expected at the zones!\n" ..
+    "The Operations will be completed when all capture zones are taken, and held for at least 5 minutes!"
+    , coalition.side.BLUE)
+    
+  US_Score = SCORING:New( "CAZ-001 - Capture Zone" )
+    
+  US_Mission_OBI:AddScoring( US_Score )
+  
+  US_Mission_OBI:Start()
+
+end
+
+do -- Missions
+  
+  RU_Mission_OBI = MISSION:New( RU_CC, "Operation Burning Ice", "Primary",
+    "Welcome pilot. We need to consolidate out position on the theater.\n" ..
+    "There are 3 enemy strategic areas(capture points) located at region as shown on the briefing.\n" ..
+    "Eliminate all resistance on the areas, so our helicopters can unload troops and hardware, " ..
+    "if we have troops on the ground the area will be in our control.\n " .. 
+    "The orders are to hold position until all capture zones are taken.\n" ..
+    "Use the map (F10) or the briefing for a clear indication of the location of each zone.\n" ..
+    "Note that heavy resistance can be expected at the zones!\n" ..
+    "The Operations will be completed when all capture zones are taken, and held for at least 5 minutes!"
+    , coalition.side.RED)
+    
+  RU_Score = SCORING:New( "CAZ-001 - Capture Zone" )
+    
+  RU_Mission_OBI:AddScoring( RU_Score )
+  
+  RU_Mission_OBI:Start()
+
+end
+
+CaptureZone1 = ZONE:New( "Capture Zone 1" )
+CaptureZone2 = ZONE:New( "Capture Zone 2" )
+CaptureZone3 = ZONE:New( "Capture Zone 3" )
+CaptureZone4 = ZONE:New( "Capture Zone 4" )
+
+ZoneCaptureCoalition_Red1 = ZONE_CAPTURE_COALITION:New( CaptureZone1, coalition.side.BLUE )
+ZoneCaptureCoalition_Blue1 = ZONE_CAPTURE_COALITION:New( CaptureZone2, coalition.side.RED )
+ZoneCaptureCoalition_Red2 = ZONE_CAPTURE_COALITION:New( CaptureZone3, coalition.side.BLUE )
+ZoneCaptureCoalition_Blue2 = ZONE_CAPTURE_COALITION:New( CaptureZone4, coalition.side.RED )
+
+function ZoneCaptureCoalition_Red1:OnEnterGuarded( From, Event, To )
+  if From ~= To then
+    local Coalition = self:GetCoalition()
+    self:E( { Coalition = Coalition } )
+    if Coalition == coalition.side.BLUE then
+      ZoneCaptureCoalition_Red1:Smoke( SMOKECOLOR.Blue )
+      US_CC:MessageTypeToCoalition( string.format( "%s is under protection of the USA", ZoneCaptureCoalition_Red1:GetZoneName() ), MESSAGE.Type.Information )
+      RU_CC:MessageTypeToCoalition( string.format( "%s is under protection of the USA", ZoneCaptureCoalition_Red1:GetZoneName() ), MESSAGE.Type.Information )
+    else
+      ZoneCaptureCoalition_Red1:Smoke( SMOKECOLOR.Red )
+      RU_CC:MessageTypeToCoalition( string.format( "%s is under protection of Russia", ZoneCaptureCoalition_Red1:GetZoneName() ), MESSAGE.Type.Information )
+      US_CC:MessageTypeToCoalition( string.format( "%s is under protection of Russia", ZoneCaptureCoalition_Red1:GetZoneName() ), MESSAGE.Type.Information )
+    end
+  end
+end
+
+--function ZoneCaptureCoalition:OnEnterEmpty()
+--  ZoneCaptureCoalition:Smoke( SMOKECOLOR.Green )
+--  US_CC:MessageTypeToCoalition( string.format( "%s is unprotected, and can be captured!", ZoneCaptureCoalition:GetZoneName() ), MESSAGE.Type.Information )
+--  RU_CC:MessageTypeToCoalition( string.format( "%s is unprotected, and can be captured!", ZoneCaptureCoalition:GetZoneName() ), MESSAGE.Type.Information )
+--end
+
+function ZoneCaptureCoalition_Red1:OnEnterAttacked()
+  ZoneCaptureCoalition_Red1:Smoke( SMOKECOLOR.White )
+  local Coalition = self:GetCoalition()
+  self:E({Coalition = Coalition})
+  if Coalition == coalition.side.BLUE then
+    US_CC:MessageTypeToCoalition( string.format( "%s is under attack by Russia", ZoneCaptureCoalition_Red1:GetZoneName() ), MESSAGE.Type.Information )
+    RU_CC:MessageTypeToCoalition( string.format( "We are attacking %s", ZoneCaptureCoalition_Red1:GetZoneName() ), MESSAGE.Type.Information )
+  else
+    RU_CC:MessageTypeToCoalition( string.format( "%s is under attack by the USA", ZoneCaptureCoalition_Red1:GetZoneName() ), MESSAGE.Type.Information )
+    US_CC:MessageTypeToCoalition( string.format( "We are attacking %s", ZoneCaptureCoalition_Red1:GetZoneName() ), MESSAGE.Type.Information )
+  end
+end
+
+--- @param Functional.Protect#ZONE_CAPTURE_COALITION self
+function ZoneCaptureCoalition_Red1:OnEnterCaptured()
+  local Coalition = self:GetCoalition()
+  self:E({Coalition = Coalition})
+  if Coalition == coalition.side.BLUE then
+    RU_CC:MessageTypeToCoalition( string.format( "%s is captured by the USA, we lost it!", ZoneCaptureCoalition_Red1:GetZoneName() ), MESSAGE.Type.Information )
+    US_CC:MessageTypeToCoalition( string.format( "We captured %s, Excellent job!", ZoneCaptureCoalition_Red1:GetZoneName() ), MESSAGE.Type.Information )
+  else
+    US_CC:MessageTypeToCoalition( string.format( "%s is captured by Russia, we lost it!", ZoneCaptureCoalition_Red1:GetZoneName() ), MESSAGE.Type.Information )
+    RU_CC:MessageTypeToCoalition( string.format( "We captured %s, Excellent job!", ZoneCaptureCoalition_Red1:GetZoneName() ), MESSAGE.Type.Information )
+  end
+  
+  self:AddScore( "Captured", "Zone captured: Extra points granted.", 200 )    
+  
+  self:__Guard( 30 )
+end
+
+--zone 2
+
+function ZoneCaptureCoalition_Blue1:OnEnterGuarded( From, Event, To )
+  if From ~= To then
+    local Coalition = self:GetCoalition()
+    self:E( { Coalition = Coalition } )
+    if Coalition == coalition.side.BLUE then
+      ZoneCaptureCoalition_Blue1:Smoke( SMOKECOLOR.Blue )
+      US_CC:MessageTypeToCoalition( string.format( "%s is under protection of the USA", ZoneCaptureCoalition_Blue1:GetZoneName() ), MESSAGE.Type.Information )
+      RU_CC:MessageTypeToCoalition( string.format( "%s is under protection of the USA", ZoneCaptureCoalition_Blue1:GetZoneName() ), MESSAGE.Type.Information )
+    else
+      ZoneCaptureCoalition_Blue1:Smoke( SMOKECOLOR.Red )
+      RU_CC:MessageTypeToCoalition( string.format( "%s is under protection of Russia", ZoneCaptureCoalition_Blue1:GetZoneName() ), MESSAGE.Type.Information )
+      US_CC:MessageTypeToCoalition( string.format( "%s is under protection of Russia", ZoneCaptureCoalition_Blue1:GetZoneName() ), MESSAGE.Type.Information )
+    end
+  end
+end
+
+--function ZoneCaptureCoalition:OnEnterEmpty()
+--  ZoneCaptureCoalition:Smoke( SMOKECOLOR.Green )
+--  US_CC:MessageTypeToCoalition( string.format( "%s is unprotected, and can be captured!", ZoneCaptureCoalition:GetZoneName() ), MESSAGE.Type.Information )
+--  RU_CC:MessageTypeToCoalition( string.format( "%s is unprotected, and can be captured!", ZoneCaptureCoalition:GetZoneName() ), MESSAGE.Type.Information )
+--end
+
+function ZoneCaptureCoalition_Blue1:OnEnterAttacked()
+  ZoneCaptureCoalition_Blue1:Smoke( SMOKECOLOR.White )
+  local Coalition = self:GetCoalition()
+  self:E({Coalition = Coalition})
+  if Coalition == coalition.side.BLUE then
+    US_CC:MessageTypeToCoalition( string.format( "%s is under attack by Russia", ZoneCaptureCoalition_Blue1:GetZoneName() ), MESSAGE.Type.Information )
+    RU_CC:MessageTypeToCoalition( string.format( "We are attacking %s", ZoneCaptureCoalition_Blue1:GetZoneName() ), MESSAGE.Type.Information )
+  else
+    RU_CC:MessageTypeToCoalition( string.format( "%s is under attack by the USA", ZoneCaptureCoalition_Blue1:GetZoneName() ), MESSAGE.Type.Information )
+    US_CC:MessageTypeToCoalition( string.format( "We are attacking %s", ZoneCaptureCoalition_Blue1:GetZoneName() ), MESSAGE.Type.Information )
+  end
+end
+
+--- @param Functional.Protect#ZONE_CAPTURE_COALITION self
+function ZoneCaptureCoalition_Blue1:OnEnterCaptured()
+  local Coalition = self:GetCoalition()
+  self:E({Coalition = Coalition})
+  if Coalition == coalition.side.BLUE then
+    RU_CC:MessageTypeToCoalition( string.format( "%s is captured by the USA, we lost it!", ZoneCaptureCoalition_Blue1:GetZoneName() ), MESSAGE.Type.Information )
+    US_CC:MessageTypeToCoalition( string.format( "We captured %s, Excellent job!", ZoneCaptureCoalition_Blue1:GetZoneName() ), MESSAGE.Type.Information )
+  else
+    US_CC:MessageTypeToCoalition( string.format( "%s is captured by Russia, we lost it!", ZoneCaptureCoalition_Blue1:GetZoneName() ), MESSAGE.Type.Information )
+    RU_CC:MessageTypeToCoalition( string.format( "We captured %s, Excellent job!", ZoneCaptureCoalition_Blue1:GetZoneName() ), MESSAGE.Type.Information )
+  end
+  
+  self:AddScore( "Captured", "Zone captured: Extra points granted.", 200 )    
+  
+  self:__Guard( 30 )
+end
+
+--zone 3
+
+function ZoneCaptureCoalition_Red2:OnEnterGuarded( From, Event, To )
+  if From ~= To then
+    local Coalition = self:GetCoalition()
+    self:E( { Coalition = Coalition } )
+    if Coalition == coalition.side.BLUE then
+      ZoneCaptureCoalition_Red2:Smoke( SMOKECOLOR.Blue )
+      US_CC:MessageTypeToCoalition( string.format( "%s is under protection of the USA", ZoneCaptureCoalition_Red2:GetZoneName() ), MESSAGE.Type.Information )
+      RU_CC:MessageTypeToCoalition( string.format( "%s is under protection of the USA", ZoneCaptureCoalition_Red2:GetZoneName() ), MESSAGE.Type.Information )
+    else
+      ZoneCaptureCoalition_Red2:Smoke( SMOKECOLOR.Red )
+      RU_CC:MessageTypeToCoalition( string.format( "%s is under protection of Russia", ZoneCaptureCoalition_Red2:GetZoneName() ), MESSAGE.Type.Information )
+      US_CC:MessageTypeToCoalition( string.format( "%s is under protection of Russia", ZoneCaptureCoalition_Red2:GetZoneName() ), MESSAGE.Type.Information )
+    end
+  end
+end
+
+--function ZoneCaptureCoalition:OnEnterEmpty()
+--  ZoneCaptureCoalition:Smoke( SMOKECOLOR.Green )
+--  US_CC:MessageTypeToCoalition( string.format( "%s is unprotected, and can be captured!", ZoneCaptureCoalition:GetZoneName() ), MESSAGE.Type.Information )
+--  RU_CC:MessageTypeToCoalition( string.format( "%s is unprotected, and can be captured!", ZoneCaptureCoalition:GetZoneName() ), MESSAGE.Type.Information )
+--end
+
+function ZoneCaptureCoalition_Red2:OnEnterAttacked()
+  ZoneCaptureCoalition_Red2:Smoke( SMOKECOLOR.White )
+  local Coalition = self:GetCoalition()
+  self:E({Coalition = Coalition})
+  if Coalition == coalition.side.BLUE then
+    US_CC:MessageTypeToCoalition( string.format( "%s is under attack by Russia", ZoneCaptureCoalition_Red2:GetZoneName() ), MESSAGE.Type.Information )
+    RU_CC:MessageTypeToCoalition( string.format( "We are attacking %s", ZoneCaptureCoalition_Red2:GetZoneName() ), MESSAGE.Type.Information )
+  else
+    RU_CC:MessageTypeToCoalition( string.format( "%s is under attack by the USA", ZoneCaptureCoalition_Red2:GetZoneName() ), MESSAGE.Type.Information )
+    US_CC:MessageTypeToCoalition( string.format( "We are attacking %s", ZoneCaptureCoalition_Red2:GetZoneName() ), MESSAGE.Type.Information )
+  end
+end
+
+--- @param Functional.Protect#ZONE_CAPTURE_COALITION self
+function ZoneCaptureCoalition_Red2:OnEnterCaptured()
+  local Coalition = self:GetCoalition()
+  self:E({Coalition = Coalition})
+  if Coalition == coalition.side.BLUE then
+    RU_CC:MessageTypeToCoalition( string.format( "%s is captured by the USA, we lost it!", ZoneCaptureCoalition_Red2:GetZoneName() ), MESSAGE.Type.Information )
+    US_CC:MessageTypeToCoalition( string.format( "We captured %s, Excellent job!", ZoneCaptureCoalition_Red2:GetZoneName() ), MESSAGE.Type.Information )
+  else
+    US_CC:MessageTypeToCoalition( string.format( "%s is captured by Russia, we lost it!", ZoneCaptureCoalition_Red2:GetZoneName() ), MESSAGE.Type.Information )
+    RU_CC:MessageTypeToCoalition( string.format( "We captured %s, Excellent job!", ZoneCaptureCoalition_Red2:GetZoneName() ), MESSAGE.Type.Information )
+  end
+  
+  self:AddScore( "Captured", "Zone captured: Extra points granted.", 200 )    
+  
+  self:__Guard( 30 )
+end
+
+--zone 4
+
+
+function ZoneCaptureCoalition_Blue2:OnEnterGuarded( From, Event, To )
+  if From ~= To then
+    local Coalition = self:GetCoalition()
+    self:E( { Coalition = Coalition } )
+    if Coalition == coalition.side.BLUE then
+      ZoneCaptureCoalition_Blue2:Smoke( SMOKECOLOR.Blue )
+      US_CC:MessageTypeToCoalition( string.format( "%s is under protection of the USA", ZoneCaptureCoalition_Blue2:GetZoneName() ), MESSAGE.Type.Information )
+      RU_CC:MessageTypeToCoalition( string.format( "%s is under protection of the USA", ZoneCaptureCoalition_Blue2:GetZoneName() ), MESSAGE.Type.Information )
+    else
+      ZoneCaptureCoalition_Blue2:Smoke( SMOKECOLOR.Red )
+      RU_CC:MessageTypeToCoalition( string.format( "%s is under protection of Russia", ZoneCaptureCoalition_Blue2:GetZoneName() ), MESSAGE.Type.Information )
+      US_CC:MessageTypeToCoalition( string.format( "%s is under protection of Russia", ZoneCaptureCoalition_Blue2:GetZoneName() ), MESSAGE.Type.Information )
+    end
+  end
+end
+
+--function ZoneCaptureCoalition:OnEnterEmpty()
+--  ZoneCaptureCoalition:Smoke( SMOKECOLOR.Green )
+--  US_CC:MessageTypeToCoalition( string.format( "%s is unprotected, and can be captured!", ZoneCaptureCoalition:GetZoneName() ), MESSAGE.Type.Information )
+--  RU_CC:MessageTypeToCoalition( string.format( "%s is unprotected, and can be captured!", ZoneCaptureCoalition:GetZoneName() ), MESSAGE.Type.Information )
+--end
+
+function ZoneCaptureCoalition_Blue2:OnEnterAttacked()
+  ZoneCaptureCoalition_Blue2:Smoke( SMOKECOLOR.White )
+  local Coalition = self:GetCoalition()
+  self:E({Coalition = Coalition})
+  if Coalition == coalition.side.BLUE then
+    US_CC:MessageTypeToCoalition( string.format( "%s is under attack by Russia", ZoneCaptureCoalition_Blue2:GetZoneName() ), MESSAGE.Type.Information )
+    RU_CC:MessageTypeToCoalition( string.format( "We are attacking %s", ZoneCaptureCoalition_Blue2:GetZoneName() ), MESSAGE.Type.Information )
+  else
+    RU_CC:MessageTypeToCoalition( string.format( "%s is under attack by the USA", ZoneCaptureCoalition_Blue2:GetZoneName() ), MESSAGE.Type.Information )
+    US_CC:MessageTypeToCoalition( string.format( "We are attacking %s", ZoneCaptureCoalition_Blue2:GetZoneName() ), MESSAGE.Type.Information )
+  end
+end
+
+--- @param Functional.Protect#ZONE_CAPTURE_COALITION self
+function ZoneCaptureCoalition_Blue2:OnEnterCaptured()
+  local Coalition = self:GetCoalition()
+  self:E({Coalition = Coalition})
+  if Coalition == coalition.side.BLUE then
+    RU_CC:MessageTypeToCoalition( string.format( "%s is captured by the USA, we lost it!", ZoneCaptureCoalition_Blue2:GetZoneName() ), MESSAGE.Type.Information )
+    US_CC:MessageTypeToCoalition( string.format( "We captured %s, Excellent job!", ZoneCaptureCoalition_Blue2:GetZoneName() ), MESSAGE.Type.Information )
+  else
+    US_CC:MessageTypeToCoalition( string.format( "%s is captured by Russia, we lost it!", ZoneCaptureCoalition_Blue2:GetZoneName() ), MESSAGE.Type.Information )
+    RU_CC:MessageTypeToCoalition( string.format( "We captured %s, Excellent job!", ZoneCaptureCoalition_Blue2:GetZoneName() ), MESSAGE.Type.Information )
+  end
+  
+  self:AddScore( "Captured", "Zone captured: Extra points granted.", 200 )    
+  
+  self:__Guard( 30 )
+end
+
 --spawn the Awacs and Tanker aircraft for both coalitions
+
 R1AwacsSpawn = SPAWN:New( "RU Awacs 1" )
     :InitRepeatOnLanding()
     :OnSpawnGroup(
@@ -189,7 +457,7 @@ A2ADispatcher_Red:SetSquadronCapInterval( "Maykop", 2, 180, 600 )
 A2ADispatcher_Red:SetSquadronCap( "Novo", CAPZoneCoast, 4000, 10000, 500, 600, 600, 900 )
 A2ADispatcher_Red:SetSquadronCapInterval( "Novo", 2, 180, 600 )
 A2ADispatcher_Red:SetSquadronCap( "NovoK", CAPZoneKuz, 4000, 10000, 500, 600, 600, 900 )
-A2ADispatcher_Red:SetSquadronCapInterval( "NovoK", 2, 180, 600 )
+A2ADispatcher_Red:SetSquadronCapInterval( "NovoK", 1, 180, 600 )
 A2ADispatcher_Red:SetSquadronCap( "Mozdok", CAPZoneEasts, 4000, 10000, 500, 600, 600, 900 )
 A2ADispatcher_Red:SetSquadronCapInterval( "Mozdok", 4, 180, 600 )
 
@@ -237,39 +505,51 @@ A2ADispatcher_Blue:SetSquadronCapInterval( "Senaki", 2, 200, 800 )
 A2ADispatcher_Blue:SetSquadronCap( "Kobuleti", CAPZoneCoasts, 4000, 10000, 500, 600, 600, 900 )
 A2ADispatcher_Blue:SetSquadronCapInterval( "Kobuleti", 2, 200, 800 )
 A2ADispatcher_Blue:SetSquadronCap( "KobuletiN", CAPZoneStennis, 4000, 10000, 500, 600, 600, 900 )
-A2ADispatcher_Blue:SetSquadronCapInterval( "KobuletiN", 2, 200, 800 )
+A2ADispatcher_Blue:SetSquadronCapInterval( "KobuletiN", 1, 200, 800 )
 A2ADispatcher_Blue:SetSquadronCap( "Vaziani", CAPZoneEast, 4000, 10000, 500, 600, 600, 900 )
 A2ADispatcher_Blue:SetSquadronCapInterval( "Vaziani", 4, 200, 800 )
 
---ZoneTable = { ZONE:New( "Zone1" ), ZONE:New( "Zone2" ) }
+Csar_Red = MISSION
+  :New( RU_CC, "CSAR Missions", "Tactical", "Rescue downed pilots.", coalition.side.RED )
 
-TemplateTableB = { "A", "B", "C" }
+  RRGroups = SET_GROUP:New():FilterCoalitions( "red" ):FilterPrefixes( "FARP Torba", "FARP Skala", "Gelendzhik" ):FilterStart()
 
-Spawn_Vehicle_1 = SPAWN:New( "US Spawn 1" )
-:InitRandomizeRoute( 1, 1, 200 )
-:InitRandomizeTemplate( TemplateTableB ) 
---:InitRandomizeZones( ZoneTable )
-:SpawnScheduled( 4000, .5 )
+  TaskDispatcher = TASK_CARGO_DISPATCHER:New( Csar_Red, RRGroups )
 
-Spawn_Vehicle_2 = SPAWN:New( "US Spawn 2" )
-:InitRandomizeRoute( 1, 1, 200 )
-:InitRandomizeTemplate( TemplateTableB ) 
---:InitRandomizeZones( ZoneTable )
-:SpawnScheduled( 4000, .5 )
+  TaskDispatcher:StartCSARTasks( 
+  "CSAR", 
+  { ZONE_UNIT:New( "RU Hospital", STATIC:FindByName( "RU Hospital" ), 100 ) }, 
+  "One of our pilots has ejected. Go out to Search and Rescue our pilot!\n" .. 
+  "Use the radio menu to let the command center assist you with the CSAR tasking."
+)
 
-TemplateTableR = { "AA", "BB", "CC" }
+function TaskDispatcher:OnAfterCargoDeployed( From, Event, To, Task, TaskPrefix, TaskUnit, Cargo, DeployZone )
 
-Spawn_Vehicle_3 = SPAWN:New( "RU Spawn 1" )
-:InitRandomizeRoute( 1, 1, 200 )
-:InitRandomizeTemplate( TemplateTableR ) 
---:InitRandomizeZones( ZoneTable )
-:SpawnScheduled( 4000, .5 )
+  MESSAGE:NewType( "Unit " .. TaskUnit:GetName().. " has deployed cargo " .. Cargo:GetName() .. " at zone " .. DeployZone:GetName() .. " for task " .. Task:GetName() .. ".", MESSAGE.Type.Information ):ToRed()
+  
+end
 
-Spawn_Vehicle_4 = SPAWN:New( "RU Spawn 1" )
-:InitRandomizeRoute( 1, 1, 200 )
-:InitRandomizeTemplate( TemplateTableR ) 
---:InitRandomizeZones( ZoneTable )
-:SpawnScheduled( 4000, .5 )
+Csar_Blue = MISSION
+  :New( US_CC, "CSAR Missions", "Tactical", "Rescue downed pilots.", coalition.side.BLUE )
+
+  BRGroups = SET_GROUP:New():FilterCoalitions( "blue" ):FilterPrefixes( "FARP Paris", "FARP Rome", "FARP London" ):FilterStart()
+
+  TaskDispatcher = TASK_CARGO_DISPATCHER:New( Csar_Blue, BRGroups )
+
+  TaskDispatcher:StartCSARTasks( 
+  "CSAR", 
+  { ZONE_UNIT:New( "US Hospital", STATIC:FindByName( "US Hospital" ), 100 ) }, 
+  "One of our pilots has ejected. Go out to Search and Rescue our pilot!\n" .. 
+  "Use the radio menu to let the command center assist you with the CSAR tasking."
+)
+
+function TaskDispatcher:OnAfterCargoDeployed( From, Event, To, Task, TaskPrefix, TaskUnit, Cargo, DeployZone )
+
+  MESSAGE:NewType( "Unit " .. TaskUnit:GetName().. " has deployed cargo " .. Cargo:GetName() .. " at zone " .. DeployZone:GetName() .. " for task " .. Task:GetName() .. ".", MESSAGE.Type.Information ):ToBlue()
+  
+end
+
+
 
 --CapSpawn = SPAWN:New( "Rus1" )
 --    --:InitLimit(6,12)
