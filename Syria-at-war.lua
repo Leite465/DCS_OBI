@@ -5,29 +5,6 @@ do -- Setup the Command Centers
 
 end
 
-do
---create an instance of the IADS
-redIADS = SkynetIADS:create('RED')
-redIADS:addEarlyWarningRadarsByPrefix('EWR')
-redIADS:addSAMSitesByPrefix('Sam')
-
-commandCenter = StaticObject.getByName('REDHQS')
-redIADS:addCommandCenter(commandCenter)
-
-redIADS:addEarlyWarningRadar('RU Awacs 1')
-redIADS:addEarlyWarningRadar('RU Awacs 2')
-
-redIADS:getSAMSiteByGroupName('Sam'):setGoLiveRangeInPercent(70)
-
-redIADS:activate()
-
-blueIADS = SkynetIADS:create('BLUE')
-blueIADS:addSAMSitesByPrefix('SpawnUS')
-blueIADS:addEarlyWarningRadarsByPrefix('EWUS')
-blueIADS:activate()
-blueIADS:addRadioMenu()
-
-end
 --spawn the Awacs and Tanker aircraft for both coalitions
 
 R1AwacsSpawn = SPAWN:New( "RU Awacs 1" )
@@ -660,24 +637,24 @@ A2ADispatcher_Red:SetSquadronTakeoffFromParkingHot( "Palmyra" )
 A2ADispatcher_Red:SetSquadronLandingAtEngineShutdown( "Palmyra" )
 A2ADispatcher_Red:SetSquadronOverhead( "Palmyra", 1.3 )
 A2ADispatcher_Red:SetSquadronGrouping( "Palmyra", 2 )
-A2ADispatcher:SetSquadronFuelThreshold( "Palmyra", 0.3 )
-A2ADispatcher:SetSquadronTanker( "Palmyra", "RU Tanker 2" )
+A2ADispatcher_Red:SetSquadronFuelThreshold( "Palmyra", 0.3 )
+A2ADispatcher_Red:SetSquadronTanker( "Palmyra", "RU Tanker 2" )
 
 A2ADispatcher_Red:SetSquadron( "Hama", AIRBASE.Syria.Hama, { "M31", "M23", "M29", "S27" }, 300 )
 A2ADispatcher_Red:SetSquadronTakeoffFromParkingHot( "Hama" )
 A2ADispatcher_Red:SetSquadronLandingAtEngineShutdown( "Hama" )
 A2ADispatcher_Red:SetSquadronOverhead( "Hama", 1.3 )
 A2ADispatcher_Red:SetSquadronGrouping( "Hama", 2 )
-A2ADispatcher:SetSquadronFuelThreshold( "Hama", 0.3 )
-A2ADispatcher:SetSquadronTanker( "Hama", "RU Tanker 1" )
+A2ADispatcher_Red:SetSquadronFuelThreshold( "Hama", 0.3 )
+A2ADispatcher_Red:SetSquadronTanker( "Hama", "RU Tanker 1" )
 
 A2ADispatcher_Red:SetSquadron( "Dumayr", AIRBASE.Syria.Al_Dumayr, { "M31", "M23", "M29", "S27" }, 300 )
 A2ADispatcher_Red:SetSquadronTakeoffFromParkingHot( "Dumayr" )
 A2ADispatcher_Red:SetSquadronLandingAtEngineShutdown( "Dumayr" )
 A2ADispatcher_Red:SetSquadronOverhead( "Dumayr", 1.3 )
 A2ADispatcher_Red:SetSquadronGrouping( "Dumayr", 2 )
-A2ADispatcher:SetSquadronFuelThreshold( "Dumayr", 0.3 )
-A2ADispatcher:SetSquadronTanker( "Dumayr", "RU Tanker 2" )
+A2ADispatcher_Red:SetSquadronFuelThreshold( "Dumayr", 0.3 )
+A2ADispatcher_Red:SetSquadronTanker( "Dumayr", "RU Tanker 2" )
 
 A2ADispatcher_Red:SetSquadron( "Recce", AIRBASE.Syria.Al_Dumayr, { "RC1", "RC2" }, 300 )
 A2ADispatcher_Red:SetSquadronTakeoffFromParkingHot( "Recce" )
@@ -727,7 +704,7 @@ function TaskDispatcher:OnAfterCargoDeployed( From, Event, To, Task, TaskPrefix,
   
 end
 
---SEAD_SAM_Defenses = SEAD:New( { 'Sam-1', 'Sam-2', 'Sam-3', 'Sam-4', 'Sam-5', 'Sam-6', 'Sam-7', 'Sam-8', 'Sam-9', 'Sam-10', 'Sam-11', 'Sam-12' } )
+SEAD_SAM_Defenses = SEAD:New( { 'Sam-1', 'Sam-2', 'Sam-3', 'Sam-4', 'Sam-5', 'Sam-6', 'Sam-7', 'Sam-8', 'Sam-9', 'Sam-10', 'Sam-11', 'Sam-12' } )
 
 Ship = GROUP:FindByName( "Naval-4", "Naval-2" )  
 Ship:PatrolZones( { ZONE:New( "Patrol Area" ) }, 120, "Vee" )
