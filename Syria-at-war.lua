@@ -5,6 +5,28 @@ do -- Setup the Command Centers
 
 end
 
+do
+--create an instance of the IADS
+redIADS = SkynetIADS:create('RED')
+redIADS:addEarlyWarningRadarsByPrefix('EWR')
+redIADS:addSAMSitesByPrefix('Sam')
+
+commandCenter = StaticObject.getByName('REDHQS')
+redIADS:addCommandCenter(commandCenter)
+
+redIADS:addEarlyWarningRadar('RU Awacs 1')
+redIADS:addEarlyWarningRadar('RU Awacs 2')
+
+redIADS:getSAMSiteByGroupName('Sam'):setGoLiveRangeInPercent(70)
+
+redIADS:activate()
+
+blueIADS = SkynetIADS:create('BLUE')
+blueIADS:addSAMSitesByPrefix('SpawnUS')
+blueIADS:addEarlyWarningRadarsByPrefix('EWUS')
+blueIADS:activate()
+blueIADS:addRadioMenu()
+
 --spawn the Awacs and Tanker aircraft for both coalitions
 
 R1AwacsSpawn = SPAWN:New( "RU Awacs 1" )
@@ -687,7 +709,7 @@ H1=MARKER:New(Coordinate, "Hospital"):ToAll()
 Csar_Blue = MISSION
   :New( US_CC, "CSAR Missions", "Tactical", "Rescue downed pilots.", coalition.side.BLUE )
 
-  BRGroups = SET_GROUP:New():FilterCoalitions( "blue" ):FilterPrefixes( "FARP Golan", "FARP Tyre" ):FilterStart()
+  BRGroups = SET_GROUP:New():FilterCoalitions( "blue" ):FilterPrefixes( "FARP Golan", "FARP Tyre", "Hussein" ):FilterStart()
 
   TaskDispatcher = TASK_CARGO_DISPATCHER:New( Csar_Blue, BRGroups )
 
@@ -704,7 +726,7 @@ function TaskDispatcher:OnAfterCargoDeployed( From, Event, To, Task, TaskPrefix,
   
 end
 
-SEAD_SAM_Defenses = SEAD:New( { 'Sam-1', 'Sam-2', 'Sam-3', 'Sam-4', 'Sam-5', 'Sam-6', 'Sam-7', 'Sam-8', 'Sam-9', 'Sam-10', 'Sam-11', 'Sam-12' } )
+--SEAD_SAM_Defenses = SEAD:New( { 'Sam-1', 'Sam-2', 'Sam-3', 'Sam-4', 'Sam-5', 'Sam-6', 'Sam-7', 'Sam-8', 'Sam-9', 'Sam-10', 'Sam-11', 'Sam-12' } )
 
 Ship = GROUP:FindByName( "Naval-4", "Naval-2" )  
 Ship:PatrolZones( { ZONE:New( "Patrol Area" ) }, 120, "Vee" )
