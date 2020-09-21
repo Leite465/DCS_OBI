@@ -27,6 +27,7 @@ blueIADS:addEarlyWarningRadarsByPrefix('EWUS')
 blueIADS:activate()
 blueIADS:addRadioMenu()
 
+end
 --spawn the Awacs and Tanker aircraft for both coalitions
 
 R1AwacsSpawn = SPAWN:New( "RU Awacs 1" )
